@@ -5,21 +5,12 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Random;
 import robocode.*;
-
-import robocode.RobotStatus;
 import robocode.util.*;
 import static robocode.util.Utils.normalRelativeAngleDegrees;
-//import java.awt.Color;
 
-// API help : http://robocode.sourceforge.net/docs/robocode/robocode/Robot.html
-/**
- * C - a robot by (your name here)
- */
 public class CPlusPlus extends AdvancedRobot {
 
-    /**
-     * run: C's default behavior
-     */
+    
     private static ArrayList<Enemy> enemies = new ArrayList<>();
     private ArrayList<Point> possiblePoints = new ArrayList<>();
     private boolean moving = true, gettingNewMove = false, skirmishing = true, rotation = true;
@@ -148,7 +139,7 @@ public class CPlusPlus extends AdvancedRobot {
             factY = Math.sin(Math.toRadians(heading - 270));
         }
         out.println(heading + " " + factX + " " + factY);
-        double currentDistance = 0;
+        double currentDistance;
         for (int i = 0; i < 40; i++) {
             currentDistance = i * target.e.getVelocity();
             dx = factX * currentDistance;
@@ -277,23 +268,16 @@ public class CPlusPlus extends AdvancedRobot {
         return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
-    public double getAngleTo(double x, double y) {
-        double angle = Math.atan2(x, y);
-        double a = angle - getHeadingRadians();
-        double angleX = Utils.normalRelativeAngle(a);
-        return angleX;
-    }
+   
 
     public void moveToLocation(double x, double y) {
-        x = x - getX();
-        y = y - getY();
-
-        double d = Math.hypot(x, y);
-        double angleX = getAngleTo(x, y);
-        double angle2 = Math.atan(Math.tan(angleX));
+        Point2D.Double o = new Point2D.Double(x,y);
+        double d = o.distance(getX(),getY());
+        double angle = Utils.normalRelativeAngle(Math.atan2(x - getX(), y- getY()) - getHeadingRadians());
+        double angle2 = Math.atan(Math.tan(angle));
         turnRightRadians(angle2);
 
-        if (angleX == angle2) {
+        if (angle == angle2) {
             setAhead(d);
         } else {
             setBack(d);
@@ -375,9 +359,7 @@ public class CPlusPlus extends AdvancedRobot {
 
     }
 
-    /**
-     * onHitByBullet: What to do when you're hit by a bullet
-     */
+
     public void onHitByBullet(HitByBulletEvent e) {
         int pos = findNameInArray(e.getName());
         enemies.get(pos).threadLevel *= 1.001;
